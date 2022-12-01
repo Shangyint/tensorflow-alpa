@@ -1425,7 +1425,7 @@ BuildStrategyAndCost(const HloInstructionSequence& sequence,
           // handle spmm 2d here
           HandleSpMM2d(strategies, leaf_strategies, strategy_map,
                                      ins, instruction_id, cluster_env,
-                                     batch_dim_map, solver_option)
+                                     batch_dim_map, solver_option);
         } else if (IsPassThroughTuple(ins) ||
                    opcode == HloOpcode::kOptimizationBarrier) {
           const HloInstruction* operand = ins->operand(0);

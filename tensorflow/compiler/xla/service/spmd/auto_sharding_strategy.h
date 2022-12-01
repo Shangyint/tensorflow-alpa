@@ -1030,6 +1030,13 @@ Status HandleConv(std::unique_ptr<StrategyVector>& strategies,
                   const InstructionBatchDimMap& batch_map,
                   const AutoShardingSolverOption& solver_option);
 
+Status HandleSpMM2d(std::unique_ptr<StrategyVector>& strategies,
+                  LeafStrategies& leaf_strategies, StrategyMap& strategy_map,
+                  const HloInstruction* ins, size_t instruction_id,
+                  const ClusterEnvironment& cluster_env,
+                  const InstructionBatchDimMap& batch_map,
+                  const AutoShardingSolverOption& solver_option);
+
 void GenerateReduceScatter(const HloInstructionSequence& sequence,
                            const AliasMap& alias_map,
                            const InstructionDepthMap& depth_map,

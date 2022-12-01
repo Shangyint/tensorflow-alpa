@@ -701,7 +701,25 @@ class SpMM2dHandler {
   Status RegisterStrategies() {
     // TODO: fill in strategies
   }
-}
+
+  std::unique_ptr<StrategyVector>& strategies;
+  StrategyMap& strategy_map;
+  const HloInstruction* ins;
+  const ClusterEnvironment& cluster_env;
+  const InstructionBatchDimMap& batch_map;
+  const AutoShardingSolverOption& solver_option;
+
+  const Array<int64_t>& device_mesh;
+  const Array<int64_t>& device_mesh_1d;
+  // const HloInstruction* lhs;
+  // const HloInstruction* rhs;
+
+  // // Dimension information
+  // const ConvolutionDimensionNumbers& conv_dnums;
+  // int64_t lhs_batch_dim, lhs_in_channel_dim;
+  // int64_t rhs_in_channel_dim, rhs_out_channel_dim;
+  // int64_t out_batch_dim, out_out_channel_dim;
+};
 
 
 // Register strategies for SpMM2d instructions.
