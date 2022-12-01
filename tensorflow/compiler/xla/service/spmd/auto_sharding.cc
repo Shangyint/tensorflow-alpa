@@ -1421,6 +1421,7 @@ BuildStrategyAndCost(const HloInstructionSequence& sequence,
           strategies = CreateLeafStrategyVector(instruction_id, ins,
                                                 strategy_map, leaf_strategies);
           AddReplicatedStrategy(ins, cluster_env, strategy_map, strategies, 0);
+          // handle spmm 2d here
         } else if (IsPassThroughTuple(ins) ||
                    opcode == HloOpcode::kOptimizationBarrier) {
           const HloInstruction* operand = ins->operand(0);

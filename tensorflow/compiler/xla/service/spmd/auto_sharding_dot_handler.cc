@@ -680,5 +680,45 @@ Status HandleConv(std::unique_ptr<StrategyVector>& strategies,
   return OkStatus();
 }
 
+class SpMM2dHandler {
+ public:
+  SpMM2dHandler(std::unique_ptr<StrategyVector>& strategies,
+             StrategyMap& strategy_map, const HloInstruction* ins,
+             const ClusterEnvironment& cluster_env,
+             const InstructionBatchDimMap& batch_map,
+             const AutoShardingSolverOption& solver_option)
+      : strategies(strategies),
+        strategy_map(strategy_map),
+        ins(ins),
+        cluster_env(cluster_env),
+        batch_map(batch_map),
+        solver_option(solver_option),
+        device_mesh(cluster_env.device_mesh),
+        device_mesh_1d(cluster_env.device_mesh_1d) {
+    // TODO: fill in initializations
+  }
+
+  Status RegisterStrategies() {
+    // TODO: fill in strategies
+  }
+}
+
+
+// Register strategies for SpMM2d instructions.
+Status HandleSpMM2d(std::unique_ptr<StrategyVector>& strategies,
+                 LeafStrategies& leaf_strategies, StrategyMap& strategy_map,
+                 const HloInstruction* ins, size_t instruction_id,
+                 const ClusterEnvironment& cluster_env,
+                 const InstructionBatchDimMap& batch_map,
+                 const AutoShardingSolverOption& solver_option) {
+  strategies = CreateLeafStrategyVector(instruction_id, ins, strategy_map,
+                                        leaf_strategies);
+
+  SpMM2dHandler handler(strategies, strategy_map, ins, cluster_env, batch_map,
+                     solver_option);
+  TF_RETURN_IF_ERROR(handler.RegisterStrategies());
+  return OkStatus();
+}
+
 }  // namespace spmd
 }  // namespace xla
