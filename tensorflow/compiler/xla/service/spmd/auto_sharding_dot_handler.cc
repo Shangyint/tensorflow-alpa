@@ -694,12 +694,22 @@ class SpMM2dHandler {
         batch_map(batch_map),
         solver_option(solver_option),
         device_mesh(cluster_env.device_mesh),
-        device_mesh_1d(cluster_env.device_mesh_1d) {
-    // TODO: fill in initializations
+        device_mesh_1d(cluster_env.device_mesh_1d),
+        dense_m(ins->operands(0)),
+        sparse_data(ins->operands(1)),
+        sparse_indices(ins->operands(2)),
+        sparse_indptr(ins->operands(3)),
+        // TODO: do we need sparse shapes? or can we have some static information?
+        sparse_shape(ins->operands(4)) {
   }
 
   Status RegisterStrategies() {
     // TODO: fill in strategies
+
+    // DenseRSparseSLoadBalance
+    // R = R * S
+
+    // DenseSSparseRLoadBalance
   }
 
   std::unique_ptr<StrategyVector>& strategies;
@@ -711,8 +721,11 @@ class SpMM2dHandler {
 
   const Array<int64_t>& device_mesh;
   const Array<int64_t>& device_mesh_1d;
-  // const HloInstruction* lhs;
-  // const HloInstruction* rhs;
+  const HloInstruction* dense_m;
+  const HloInstruction* sparse_data;
+  const HloInstruction* sparse_indices;
+  const HloInstruction* sparse_indptr;
+  const HloInstruction* sparse_shape;
 
   // // Dimension information
   // const ConvolutionDimensionNumbers& conv_dnums;
