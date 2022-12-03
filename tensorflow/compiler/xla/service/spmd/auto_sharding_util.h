@@ -30,6 +30,7 @@ using ReshardingCache =
 extern const char* const kPipelineMarker;
 extern const char* const kCrossMeshAllReduce;
 extern const char* const kSpMM2d;
+
 constexpr absl::string_view kPipelineMarkerStartType = "start";
 constexpr absl::string_view kPipelineMarkerEndType = "end";
 

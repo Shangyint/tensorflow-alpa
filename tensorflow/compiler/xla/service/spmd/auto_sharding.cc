@@ -1423,9 +1423,15 @@ BuildStrategyAndCost(const HloInstructionSequence& sequence,
           AddReplicatedStrategy(ins, cluster_env, strategy_map, strategies, 0);
         } else if (ins->IsCustomCall(kSpMM2d)) {
           // handle spmm 2d here
-          HandleSpMM2d(strategies, leaf_strategies, strategy_map,
-                                     ins, instruction_id, cluster_env,
-                                     batch_dim_map, solver_option);
+          // HandleSpMM2d(strategies, leaf_strategies, strategy_map,
+          //                            ins, instruction_id, cluster_env,
+          //                            batch_dim_map, solver_option);
+          
+          // TODO: temp for compile
+          strategies = CreateLeafStrategyVector(instruction_id, ins,
+                                                strategy_map, leaf_strategies);
+          AddReplicatedStrategy(ins, cluster_env, strategy_map, strategies, 0);
+
         } else if (IsPassThroughTuple(ins) ||
                    opcode == HloOpcode::kOptimizationBarrier) {
           const HloInstruction* operand = ins->operand(0);

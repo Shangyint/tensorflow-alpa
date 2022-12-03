@@ -695,12 +695,12 @@ class SpMM2dHandler {
         solver_option(solver_option),
         device_mesh(cluster_env.device_mesh),
         device_mesh_1d(cluster_env.device_mesh_1d),
-        dense_m(ins->operands(0)),
-        sparse_data(ins->operands(1)),
-        sparse_indices(ins->operands(2)),
-        sparse_indptr(ins->operands(3)),
+        dense_m(ins->operand(0)),
+        sparse_data(ins->operand(1)),
+        sparse_indices(ins->operand(2)),
+        sparse_indptr(ins->operand(3)),
         // TODO: do we need sparse shapes? or can we have some static information?
-        sparse_shape(ins->operands(4)) {
+        sparse_shape(ins->operand(4)) {
   }
 
   Status RegisterStrategies() {
@@ -710,6 +710,8 @@ class SpMM2dHandler {
     // R = R * S
 
     // DenseSSparseRLoadBalance
+
+    return OkStatus();
   }
 
   std::unique_ptr<StrategyVector>& strategies;
