@@ -389,6 +389,28 @@ Status SpmdPartitioningVisitor::HandleCustomCall(HloInstruction* hlo) {
     SetPartitionedHlo(hlo, [&] { return copy; });
     return OkStatus();
   }
+  // spmm_2d(m)
+  if (hlo->custom_call_target() == "spmm_2d") {
+    auto dense_input_partitioned = GetPartitionedHlo(hlo->operand(0));
+    auto all_oprands = hlo->operands();
+
+    std::vector<HloInstruction*> input_operands{dense_input_partitioned.hlo()};
+    for (int i = 1; i < all_oprands.size(); i++) {
+      input_operands.push_back(GetPartitionedHlo(hlo->operand(i)).hlo());
+    }
+
+    auto out_shape = MakePartitionedShape(hlo->shape(), hlo->sharding());
+    // auto partition_id = b_.AddInstruction(
+    //     HloInstruction::CreatePartitionId(ShapeUtil::MakeShape(U32, {})));
+    // input_operands.push_back(partition_id);
+    // TODO: make descriptor in opaque 
+    auto copy = b_.AddInstruction(
+        HloInstruction::CreateCustomCall(out_shape, input_operands,
+            hlo->custom_call_target()));
+
+    SetPartitionedHlo(hlo, [&] { return copy; });
+    return OkStatus();
+  }
   if (hlo->custom_call_target() == "SPMDShardToFullShape") {
     // This op switches from manual partitioning to auto partitioning.
     auto input = GetPartitionedHlo(hlo->operand(0)).hlo();

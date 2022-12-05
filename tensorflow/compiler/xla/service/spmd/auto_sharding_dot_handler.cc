@@ -699,17 +699,46 @@ class SpMM2dHandler {
         sparse_data(ins->operand(1)),
         sparse_indices(ins->operand(2)),
         sparse_indptr(ins->operand(3)),
-        // TODO: do we need sparse shapes? or can we have some static information?
-        sparse_shape(ins->operand(4)) {
+        sparse_shape(ins->operand(4))
+        // unhandled arg 5: nnz
+        {
+        
+        // std::cerr << "device mesh: " <<  device_mesh.dim(0) << " x " << device_mesh.dim(1) << std::endl;
+        // std::cerr << "device mesh 1d: " <<  device_mesh_1d.dim(0) << std::endl;
+
+        // std::cerr << ins->raw_backend_config_string() << std::endl;
   }
 
+  //RS = RR x RS
+  void AddRRSparseDenseSplit(int mesh_dim0) {
+    std::string name = absl::StrFormat("RS = RR x RS @ 0 (allreduce @ 0)");
+    HloSharding output_sec =
+        Tile(dense_m->shape(), {1}, {0}, device_mesh);
+    HloSharding sparse_data_spec = HloSharding::Replicate();
+    HloSharding sparse_indices_spec = HloSharding::Replicate();
+    HloSharding sparse_indptr_spec = HloSharding::Replicate();
+    HloSharding sparse_shape_spec = HloSharding::Replicate();
+    HloSharding nnz_spec = HloSharding::Replicate();
+    HloSharding dense_m_spec = Tile(dense_m->shape(), {1}, {0}, device_mesh);
+    // double memory_cost = GetBytes(ins->shape()) / output_spec.NumTiles();
+    // double communication_cost = cluster_env.AllReduceCost(memory_cost, 0);
+    AppendNewStrategy(ins, name, output_sec, {dense_m_spec, sparse_data_spec, 
+        sparse_indices_spec, sparse_indptr_spec, sparse_shape_spec, nnz_spec},
+        0, 0, cluster_env, strategy_map, strategies);
+  }
+
+  // SS = SR x RS
+  void AddSparseRowDenseColumn() {}
+
   Status RegisterStrategies() {
-    // TODO: fill in strategies
 
-    // DenseRSparseSLoadBalance
-    // R = R * S
+    // This is dummy stragegy for now
+    AddRRSparseDenseSplit(1);
+  
+    // SS = SR x RS
+    // AddSparseRowDenseColumn1d(0, 1);
+    // AddSparseRowDenseColumn1d(1, 0);
 
-    // DenseSSparseRLoadBalance
 
     return OkStatus();
   }

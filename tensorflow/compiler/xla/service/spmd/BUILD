@@ -247,6 +247,20 @@ cc_library(
     ],
 )
 
+# cc_library(
+#     name = "spalpa_pass",
+#     srcs = ["spalpa_pass.cc"],
+#     hdrs = ["spalpa_pass.h"],
+#     deps = [
+#         ":auto_sharding",
+#         "//tensorflow/compiler/xla:shape_util",
+#         "//tensorflow/compiler/xla/service:hlo",
+#         "//tensorflow/compiler/xla/service:hlo_pass",
+#         "//tensorflow/compiler/xla/service:pass_context",
+#         "@pybind11",
+#     ],
+# )
+
 cc_library(
     name = "alpa_compiler",
     srcs = ["alpa_compiler.cc"],
