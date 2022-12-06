@@ -31,6 +31,7 @@ cc_library(
         "custom_call_handler.h",
         "spmd_partitioner.h",
         "spmd_partitioner_util.h",
+        "spmm_helper.h",
     ],
     deps = [
         "//tensorflow/compiler/xla:comparison_util",

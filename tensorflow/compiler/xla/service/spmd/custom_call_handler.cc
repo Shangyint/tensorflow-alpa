@@ -38,6 +38,8 @@ limitations under the License.
 #include "tensorflow/compiler/xla/util.h"
 #include "tensorflow/compiler/xla/window_util.h"
 
+#include "tensorflow/compiler/xla/service/spmd/spmm_helper.h"
+
 namespace xla {
 namespace spmd {
 
@@ -403,10 +405,16 @@ Status SpmdPartitioningVisitor::HandleCustomCall(HloInstruction* hlo) {
     // auto partition_id = b_.AddInstruction(
     //     HloInstruction::CreatePartitionId(ShapeUtil::MakeShape(U32, {})));
     // input_operands.push_back(partition_id);
-    // TODO: make descriptor in opaque 
+    // TODO: make descriptor in opaque
+
+    auto b_dims = dense_input_partitioned.hlo()->shape().dimensions();
+    spalpa::DnMatDescr_t b_descr = spalpa::build_DnMatDescr(b_dims[0], b_dims[1]);
+    spalpa::SpmmDescr_t spmm_descr = spalpa::build_SpmmDescr(b_descr);
+    std::string opaque = spalpa::PackDescriptorAsString(spmm_descr);
+
     auto copy = b_.AddInstruction(
         HloInstruction::CreateCustomCall(out_shape, input_operands,
-            hlo->custom_call_target()));
+            hlo->custom_call_target(), opaque));
 
     SetPartitionedHlo(hlo, [&] { return copy; });
     return OkStatus();
