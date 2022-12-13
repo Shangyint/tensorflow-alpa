@@ -731,8 +731,8 @@ class SpMM2dHandler {
 
   // SR = SR x RR
   void AddSparseRowDenseReplicate () {
-      std::cerr << "device mesh: " <<  device_mesh.dim(0) << " x " << device_mesh.dim(1) << std::endl;
-      std::cerr << "device mesh 1d: " <<  device_mesh_1d.dim(0) << std::endl;
+      // std::cerr << "device mesh: " <<  device_mesh.dim(0) << " x " << device_mesh.dim(1) << std::endl;
+      // std::cerr << "device mesh 1d: " <<  device_mesh_1d.dim(0) << std::endl;
     std::string name = absl::StrFormat("SR = SR x RR @ 0 (allreduce @ 0)");
     HloSharding output_sec =
         Tile(dense_m->shape(), {0}, {0}, device_mesh);
