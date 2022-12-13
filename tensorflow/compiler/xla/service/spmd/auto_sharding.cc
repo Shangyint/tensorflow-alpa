@@ -1881,6 +1881,17 @@ void SetHloSharding(const HloInstructionSequence& sequence,
     // Here we insert some extra annotated identity instructions to help the
     // spmd partitioner generate correct code.
 
+    if (inst->IsCustomCall(kSpMM2d)) {
+      // For SpMM2d, we need to get the sharding of the sparse matrix from the sharding map.
+      const ShardingStrategy& stra = GetShardingStrategy(inst);
+      if (sparse_sharding_map.find(stra.name) == sparse_sharding_map.end()) {
+        // do nothing
+      } else{
+        auto sparse_sharding_spec = sparse_sharding_map.at(stra.name);
+        inst->set_raw_backend_config_string(sparse_sharding_spec);
+      }
+    }
+
     if (inst->opcode() == HloOpcode::kDot) {
       const ShardingStrategy& stra = GetShardingStrategy(inst);
       const HloInstruction* lhs = inst->operand(0);

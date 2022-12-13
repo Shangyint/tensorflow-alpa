@@ -405,11 +405,18 @@ Status SpmdPartitioningVisitor::HandleCustomCall(HloInstruction* hlo) {
     // auto partition_id = b_.AddInstruction(
     //     HloInstruction::CreatePartitionId(ShapeUtil::MakeShape(U32, {})));
     // input_operands.push_back(partition_id);
-    // TODO: make descriptor in opaque
 
+    auto backend_config = hlo->raw_backend_config_string();
     auto b_dims = dense_input_partitioned.hlo()->shape().dimensions();
+    spalpa::SparseShardingDescr_t sparse_sharding_descr;
+    if (backend_config.size() > 0) {
+        sparse_sharding_descr = spalpa::build_SparseShardingDescr(backend_config.at(0));
+    } else {
+        sparse_sharding_descr = spalpa::build_SparseShardingDescr('N');
+    }
     spalpa::DnMatDescr_t b_descr = spalpa::build_DnMatDescr(b_dims[0], b_dims[1]);
-    spalpa::SpmmDescr_t spmm_descr = spalpa::build_SpmmDescr(b_descr);
+    spalpa::SpmmDescr_t spmm_descr = spalpa::build_SpmmDescr(b_descr, sparse_sharding_descr);
+
     std::string opaque = spalpa::PackDescriptorAsString(spmm_descr);
 
     auto copy = b_.AddInstruction(

@@ -14,6 +14,8 @@ namespace spmd {
 
 namespace py = pybind11;
 
+extern std::map<std::string, std::string> sparse_sharding_map;
+
 // A constant to represent infinity cost.
 constexpr double INFINITY_COST = 1e13;
 

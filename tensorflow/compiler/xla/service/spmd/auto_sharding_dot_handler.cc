@@ -4,6 +4,8 @@
 namespace xla {
 namespace spmd {
 
+std::map<std::string, std::string> sparse_sharding_map;
+
 void AppendNewStrategy(const HloInstruction* ins, const std::string& name,
                        const HloSharding& output_spec,
                        const std::vector<HloSharding>& input_specs,
@@ -727,13 +729,36 @@ class SpMM2dHandler {
         0, 0, cluster_env, strategy_map, strategies);
   }
 
-  // SS = SR x RS
-  void AddSparseRowDenseColumn() {}
+  // SR = SR x RR
+  void AddSparseRowDenseReplicate () {
+      std::cerr << "device mesh: " <<  device_mesh.dim(0) << " x " << device_mesh.dim(1) << std::endl;
+      std::cerr << "device mesh 1d: " <<  device_mesh_1d.dim(0) << std::endl;
+    std::string name = absl::StrFormat("SR = SR x RR @ 0 (allreduce @ 0)");
+    HloSharding output_sec =
+        Tile(dense_m->shape(), {0}, {0}, device_mesh);
+    // HloSharding sparse_data_spec = Tile(dense_m->shape(), {1}, {0}, device_mesh);
+    HloSharding sparse_data_spec = HloSharding::Replicate();
+    HloSharding sparse_indices_spec = HloSharding::Replicate();
+    HloSharding sparse_indptr_spec = HloSharding::Replicate();
+    HloSharding sparse_shape_spec = HloSharding::Replicate();
+    HloSharding nnz_spec = HloSharding::Replicate();
+    HloSharding dense_m_spec = HloSharding::Replicate();
+    // double memory_cost = GetBytes(ins->shape()) / output_spec.NumTiles();
+    // double communication_cost = cluster_env.AllReduceCost(memory_cost, 0);
+    // FIXME: This is a temp hack. Later on this should be done in a more general way
+    // now "R" represents spliting by the row and "C" represents splitting by the column
+    sparse_sharding_map[name] = "R";
+    AppendNewStrategy(ins, name, output_sec, {dense_m_spec, sparse_data_spec, 
+        sparse_indices_spec, sparse_indptr_spec, sparse_shape_spec, nnz_spec},
+        0, 0, cluster_env, strategy_map, strategies);
+
+  }
 
   Status RegisterStrategies() {
 
     // This is dummy stragegy for now
-    AddRRSparseDenseSplit(1);
+    // AddRRSparseDenseSplit(1);
+    AddSparseRowDenseReplicate();
   
     // SS = SR x RS
     // AddSparseRowDenseColumn1d(0, 1);

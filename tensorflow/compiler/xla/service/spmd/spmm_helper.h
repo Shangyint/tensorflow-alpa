@@ -53,13 +53,21 @@ DnMatDescr_t build_DnMatDescr(int rows, int cols) {
     return DnMatDescr_t{rows, cols};
 }
 
+struct SparseShardingDescr_t {
+  char sharding;
+} typedef SparseShardingDescr_t;
+
+SparseShardingDescr_t build_SparseShardingDescr(char sharding) {
+    return SparseShardingDescr_t{sharding};
+}
+
 struct SpmmDescr_t {
   DnMatDescr_t B;
-
+  SparseShardingDescr_t sparse_sharding;
 } typedef SpmmDescr_t;
 
-SpmmDescr_t build_SpmmDescr(DnMatDescr_t B) {
-    return SpmmDescr_t{B};
+SpmmDescr_t build_SpmmDescr(DnMatDescr_t B, SparseShardingDescr_t sparse_sharding) {
+    return SpmmDescr_t{B, sparse_sharding};
 }
 
 
